@@ -1,0 +1,126 @@
+NEXT JS 
+https://beta.nextjs.org/docs
+
+https://www.youtube.com/watch?v=PcHY2Py6AQY&list=PL0Zuz27SZ-6Pk-QJIdGd1tGZEzy9RTgtj&index=5
+
+Key features and benefits:
+- automatic page pre-rendering, great for SEO and initial load
+- blending client side and server side, fetch data on server and render finished pages
+- file based routing
+- fullstack capabilities: add backend code, store data, get data, auth
+
+npx create-next-app
+npx create-next-app@latest --experimental-app
+
+Server Side Rendering (SSR) means that the page user's access is generated at each request.
+
+Server Side Generation (SSG) means generating the page once, at build time meaning when compiling the project, and using this page for every request until next deployment.
+
+Incremental Static Regeneration (ISR) that supports rebuilding pages without rebuilding the whole website. ISR is very similar to SSG, only it can rebuild a page after a given delay.
+
+npm run build - for check if pages are (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps) or (Static)  automatically rendered as static HTML (uses no initial props)
+
+
+
+1. File based routing
+
+The React components defined in special files of a route segment are rendered in a specific hierarchy:
+
+layout.js
+template.js
+error.js (React error boundary)
+loading.js (React suspense boundary)
+not-found.js (React error boundary)
+page.js or nested layout.js
+
+https://beta.nextjs.org/docs/routing/fundamentals
+
+
+Server and Client Components allow developers to build applications that span the server and client, combining the rich interactivity of client-side apps with the improved performance of traditional server rendering.
+
+All components inside the app directory are React Server Components (RSC) by default.
+Server Components make writing a React application feel similar to PHP or Ruby on Rails, but with the power and flexibility of React for templating UI.
+With Server Components, the initial page load is faster, and the client-side JavaScript bundle size is reduced.
+
+
+To simplify the decision between Server and Client Components, we recommend using Server Components (default in the app directory) until you have a need to use a Client Component.
+
+When Server Components:
+- Fetch data.
+- Access backend resources (directly)
+- Keep sensitive information on the server (access tokens, API keys, etc)
+- Keep large dependencies on the server / Reduce client-side JavaScript
+
+When Client Components:
+- Add interactivity and event listeners (onClick(), onChange(), etc)
+- Use State and Lifecycle Effects (useState(), useReducer(), useEffect(), etc)
+- Use browser-only APIs
+- Use custom hooks that depend on state, effects, or browser-only APIs
+- Use React Class components
+
+import "server-only";
+Then import the package into any module that contains server-only code:
+  
+The corresponding package client-only can be used to mark modules that contain client-only code – for example, code that accesses the window object.
+Client Components enable you to add client-side interactivity to your application
+"use client" directive 
+
+
+In addition to client-side and server-side rendering with React components, Next.js gives you the option to optimize rendering on the server with Static and Dynamic Rendering.
+
+Props passed from the Server Components to Client components need to be serializable.
+
+** Data fetching **
+
+Good to know: Previous Next.js data fetching methods such as getServerSideProps, getStaticProps, and getInitialProps are not supported in the new app directory.
+
+Here's a quick overview of the recommendations on this page:
+
+- Fetch data on the server using Server Components.
+- Fetch data in parallel to minimize waterfalls and reduce loading times.
+- For Layouts and Pages, fetch data where it's used. Next.js will automatically dedupe requests in a tree.
+- Use Loading UI, Streaming and Suspense to progressively render a page and show a result to the user while the rest of the content loads.
+
+The new data fetching system is built on top of the native fetch() Web API and makes use of async/await in Server Components.
+
+- React extends fetch to provide automatic request deduping.
+- Next.js extends the fetch options object to allow each request to set its own caching and revalidating rules.
+
+Whenever possible, we recommend fetching data inside Server Components. Server Components always fetch data on the server. This allows you to:
+
+- Have direct access to backend data resources (e.g. databases).
+- Keep your application more secure by preventing sensitive information, such as access tokens and API keys, from being exposed to the client.
+- Fetch data and render in the same environment. This reduces both the back-and-forth communication between client and server, as well as the work on the main thread on the client.
+- Perform multiple data fetches with single round-trip instead of multiple individual requests on the client.
+- Reduce client-server waterfalls.
+- Depending on your region, data fetching can also happen closer to your data source, reducing latency and improving performance.
+
+Good to know: It's still possible to fetch data client-side. We recommend using a third-party library such as SWR or React Query with Client components. In the future, it'll also be possible to fetch data in Client Components using React's use() hook.
+
+fetch(url, options)
+options.cache:
+	1) force-cache (default) - If there is a match and it is fresh, it will be returned from the cache. If there is no match or a stale match, Next.js will fetch the resource from the remote server and update the cache with the downloaded resource.
+	2) no-store - resource from the remote server on every request without looking in the cache
+(ISR) options.next.revalidate (Set the cache lifetime of a resource (in seconds):
+	false - Cache the resource indefinitely. Semantically equivalent to revalidate: Infinity. The HTTP cache may evict older resources over time.
+	0 - Prevent the resource from being cached.
+number - (in seconds) Specify the resource should have a cache lifetime of at most n seconds.
+
+Mechanism allows different segments of a path to control the cache lifetime of a route. Each page.tsx and layout.tsx in the route hierarchy can export a revalidate:
+export const revalidate = 60; // revalidate this page every 60 seconds
+
+** Route Handlers **
+https://beta.nextjs.org/docs/routing/route-handlers
+
+Route Handlers are only available inside the app directory. They are the equivalent of API Routes inside the pages directory meaning you do not need to use API Routes and Route Handlers together.
+
+
+
+
+
+
+
+
+
+
+
